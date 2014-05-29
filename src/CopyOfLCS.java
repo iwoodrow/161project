@@ -27,6 +27,7 @@ public class CopyOfLCS {
     for (int tc = 0; tc < T; tc++) {
       A = s.next().toCharArray();
       B = s.next().toCharArray();
+      if(B.length > A.length) System.err.println("oh no");
       System.out.println(LCS());
     }
   }
