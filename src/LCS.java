@@ -29,5 +29,6 @@ public class LCS {
       B = s.next().toCharArray();
       System.out.println(LCS());
     }
+    System.out.println("hello");
   }
 }
