@@ -1,7 +1,7 @@
 import java.util.*;
 
 
-public class LCS {
+public class CLCSSlow {
   static int[][] arr = new int[2048][2048];
   static char[] A, B;
 
@@ -45,7 +45,6 @@ public class LCS {
       A = s.next().toCharArray();
       B = s.next().toCharArray();
       System.err.println(tc);
-      if(B.length < A.length) System.err.println("oh no");
       System.out.println(CLCS());
     }
   }
