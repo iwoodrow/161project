@@ -86,42 +86,19 @@ public class CLCSFast {
                 }
             }
 		}
-        for (i = lowerIndex + m; i < mid + m; i++){
-            start = upper.get(i - upperIndex).x;
-            end = n;
-            for (j = start; j <= end; j++){
-                int left = (inPath(upper, i - upperIndex, j - 1) != -1) ? arr[i][j - 1] : 0;
-                int up = arr[i - 1][j];
-                arr[i][j] = Math.max(left, up);
-                if (j!= 0 && A[(i-1) % A.length] == B[j-1] && inPath(upper, i - upperIndex - 1, j - 1) != -1) {
+		for (i = lowerIndex + m; i < mid + m; i++){
+			start = upper.get(i - upperIndex).x;
+			end = n;
+			for (j = start; j <= end; j++){
+				int left = (inPath(upper, i - upperIndex, j - 1) != -1) ? arr[i][j - 1] : 0;
+				int up = arr[i - 1][j];
+				arr[i][j] = Math.max(left, up);
+				if (j!= 0 && A[(i-1) % A.length] == B[j-1] && inPath(upper, i - upperIndex - 1, j - 1) != -1) {
 					arr[i][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
 				}
-            }
-        }
-
-		ArrayList<Point> points = new ArrayList<Point>();
-		for (int f=0; f<m; f++){
-			points.add(new Point(0,0));
-		}
-		int row = mid + m - 1;
-		int col = n;
-		for (i = m - 1; i >= 0; i--) {
-			Point curr = new Point(col, col);
-			while (col != 0 && A[(row-1) % A.length] != B[col-1] && arr[row][col - 1] >= arr[row - 1][col]) {
-				//move left
-				col--;
-				//move leftmost left
-				curr.x--;
 			}
-			if (col != 0 && row != 0 && A[(row-1) % A.length] == B[col-1]) {
-				col--;
-				row--;
-			} else {
-				row--;
-			}
-			points.set(i, curr);
 		}
-		return points;
+		return pointList(mid + m + 1);
 	}
 
 
@@ -140,28 +117,36 @@ public class CLCSFast {
 					arr[i][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
 					arr[i + m][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
 				}
-
 			}
 		}
+
+
+
 		//path: ArrayList of Point(leftmost index, rightmost index) of a given row -- length m
 		//one entry per row, path must span m rows
 
+		System.err.println("Points: " + pointList(m));
+		p.put(0, pointList(m));
+		p.put(m, pointList(m));
+	}
+
+	private static ArrayList<Point> pointList(int row) {
 		ArrayList<Point> points = new ArrayList<Point>();		
+		int m = A.length;
+		int n = B.length;
 		for (int f=0; f<m; f++){
 			points.add(new Point(0,0));
 		}
-		int row = m;
 		int col = n;
-		for (i = m - 1; i >= 0; i--) {
+		for (int i = m - 1; i >= 0; i--) {
 			Point curr = new Point(col, col);
-			while (col != 0 && A[row - 1] != B[col - 1] && arr[row][col - 1] > arr[row - 1][col]) {
-
+			while (col != 0 && A[(row - 1) % A.length] != B[col - 1] && arr[row][col - 1] > arr[row - 1][col]) {
 				//move left
 				col--;
 				//move leftmost left
 				curr.x--;
 			}
-			if (col != 0 &&	A[row - 1] == B[col - 1]) {
+			if (col != 0 &&	row != 0 && A[(row - 1) % A.length] == B[col - 1]) {
 				col--;
 				row--;
 			} else {
@@ -169,12 +154,8 @@ public class CLCSFast {
 			}
 			points.set(i, curr);
 		}
-        System.err.println("Points: " + points);
-        p.put(0, points);
-        p.put(m, points);
-
+		return points;
 	}
-
 
 	public static void main(String[] args) {
 		Scanner s = new Scanner(System.in);
