@@ -143,7 +143,7 @@ public class CLCSFast {
 			while (col != 0 && A[(row - 1) % A.length] != B[col - 1] && arr[row][col - 1] > arr[row - 1][col]) {
 				//move left
 				col--;
-				//move leftmost left
+				//move leftmost left 
 				curr.x--;
 			}
 			if (col != 0 &&	row != 0 && A[(row - 1) % A.length] == B[col - 1]) {
