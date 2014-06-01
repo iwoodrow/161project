@@ -14,12 +14,20 @@ public class CLCSFast {
 		FindShortestPaths(0, A.length);
 		int max = 0;
 		for (int n : p.keySet()) {
-			if (p.get(n).size() > max) max = p.get(n).size();
+			int pathSize = pathSize(p.get(n));
+			if (pathSize > max) max = pathSize;
 		}
 		return max;
 	}
 
-
+    static int pathSize(ArrayList<Point> path){
+    	int size = 0;
+        for (int i=0; i<path.size(); i++){
+        	if (i == 0) continue;
+        	if (path.get(i).x > path.get(i-1).y) size++;
+        }
+        return size;
+    }
 
 	static void FindShortestPaths(int l, int u) {
 		if (u - l <= 1) return;
@@ -29,14 +37,22 @@ public class CLCSFast {
 		FindShortestPaths(mid, u);
 	}
 
-	private static boolean inPath(ArrayList<Point> path, int row, int index){
-		return (index >= path.get(row).x && index <= path.get(row).y);
+	private static int inPath(ArrayList<Point> path, int row, int index){
+		if (row < 0) return 1;
+		if (index < 0) return -1;
+		if (index >= path.get(row).x && index <= path.get(row).y) return 0;
+        if (index < path.get(row).x) return -1;
+        if (index > path.get(row).y) return 1;
+        return 0;
 	}
 
 	private static ArrayList<Point> SingleShortestPath(int mid,
 			ArrayList<Point> lower, ArrayList<Point> upper, int lowerIndex, int upperIndex) {
 		int m = A.length, n = B.length;
 		int i, j;
+        mid++;
+        lowerIndex++	;
+        upperIndex++;
 		//Initialize previous row (before first point of lower path) to 0
 		for (j = 0; j <= n; j++) arr[mid - 1][j] = 0;
 
@@ -48,15 +64,9 @@ public class CLCSFast {
 			end = lower.get(i - lowerIndex).y;
 			for (j = start; j <= end; j++) {
 				int left = arr[i][j-1];
-				int up = 0;
-				if (!inPath(lower, i - lowerIndex, j) || inPath(lower, i - lowerIndex - 1, j)){
-					up = arr[i-1][j];
-				}
+				int up = (inPath(lower, i - lowerIndex - 1, j) != 1) ? arr[i-1][j] : 0;
 				arr[i][j] = Math.max(left, up);
-				if (A[i-1 % A.length] == B[j-1] && 
-						(!inPath(lower, i - lowerIndex, j) || 
-						  inPath(lower, i - lowerIndex - 1, j) || 
-						  inPath(lower, i - lowerIndex - 1, j - 1))) {
+				if (j!= 0 && A[(i-1) % A.length] == B[j - 1] && inPath(lower, i - lowerIndex - 1, j - 1) != 1) {
 					arr[i][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
 				}
 			}
@@ -64,22 +74,46 @@ public class CLCSFast {
 		for (i = upperIndex; i < lowerIndex + m; i++){
 			start = upper.get(i - upperIndex).x;
 			end = lower.get(i - lowerIndex).y;
-
+            for (j = start; j <= end; j++){
+                int left = (inPath(upper, i - upperIndex, j - 1) != -1) ? arr[i][j - 1] : 0;
+                int up =  (inPath(lower, i - lowerIndex - 1, j) != 1) ? arr[i - 1][j] : 0;
+                arr[i][j] = Math.max(left, up);
+                // System.err.println("i-1 % A.length: " + ((i-1) % A.length) + " a.length: " + A.length + " j-1: " + (j-1) + " B.length: " + B.length); 
+                if (j!= 0 && A[(i-1) % A.length] == B[j-1] &&
+                          (inPath(lower, i - lowerIndex - 1, j - 1) != 1) &&
+                           inPath(upper, i - upperIndex - 1, j - 1) != -1){
+                    arr[i][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
+                }
+            }
 		}
+        for (i = lowerIndex + m; i < mid + m; i++){
+            start = upper.get(i - upperIndex).x;
+            end = n;
+            for (j = start; j <= end; j++){
+                int left = (inPath(upper, i - upperIndex, j - 1) != -1) ? arr[i][j - 1] : 0;
+                int up = arr[i - 1][j];
+                arr[i][j] = Math.max(left, up);
+                if (j!= 0 && A[(i-1) % A.length] == B[j-1] && inPath(upper, i - upperIndex - 1, j - 1) != -1) {
+					arr[i][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
+				}
+            }
+        }
 
 		ArrayList<Point> points = new ArrayList<Point>();
-		//?????????
-		int row = 1 + mid + m;
+		for (int f=0; f<m; f++){
+			points.add(new Point(0,0));
+		}
+		int row = mid + m - 1;
 		int col = n;
 		for (i = m - 1; i >= 0; i--) {
 			Point curr = new Point(col, col);
-			while (A[row] != B[col] && arr[row][col - 1] > arr[row - 1][col]) {
+			while (col != 0 && A[(row-1) % A.length] != B[col-1] && arr[row][col - 1] >= arr[row - 1][col]) {
 				//move left
 				col--;
 				//move leftmost left
 				curr.x--;
 			}
-			if (A[row] == B[col]) {
+			if (col != 0 && row != 0 && A[(row-1) % A.length] == B[col-1]) {
 				col--;
 				row--;
 			} else {
@@ -87,8 +121,6 @@ public class CLCSFast {
 			}
 			points.set(i, curr);
 		}
-
-
 		return points;
 	}
 
@@ -114,62 +146,33 @@ public class CLCSFast {
 		//path: ArrayList of Point(leftmost index, rightmost index) of a given row -- length m
 		//one entry per row, path must span m rows
 
-
 		ArrayList<Point> points = new ArrayList<Point>();		
-		ArrayList<Point> pointsM = new ArrayList<Point>();
+		for (int f=0; f<m; f++){
+			points.add(new Point(0,0));
+		}
 		int row = m;
 		int col = n;
 		for (i = m - 1; i >= 0; i--) {
 			Point curr = new Point(col, col);
-			while (A[row] != B[col] && arr[row][col - 1] > arr[row - 1][col]) {
+			while (col != 0 && A[row - 1] != B[col - 1] && arr[row][col - 1] > arr[row - 1][col]) {
+
 				//move left
 				col--;
 				//move leftmost left
 				curr.x--;
 			}
-			if (A[row] == B[col]) {
+			if (col != 0 &&	A[row - 1] == B[col - 1]) {
 				col--;
 				row--;
 			} else {
 				row--;
 			}
 			points.set(i, curr);
-			points.set(i + m, curr);
-
 		}
+        System.err.println("Points: " + points);
+        p.put(0, points);
+        p.put(m, points);
 
-
-		//		ArrayList<Point> points = new ArrayList<Point>();
-		//		int length = arr[m][n];
-		//		int row = m;
-		//		int col = n;
-		//		while (length > 0) {
-		//			
-		//			if (A[row] == B[col]) {
-		//				Point curr = new Point(row, col);
-		//				points.add(curr);
-		//				col--;
-		//				row--;
-		//				length--;
-		//			} else {
-		//				if (arr[row - 1][col] > arr[row][col - 1]) {
-		//					row--;
-		//				} else {
-		//					col--;
-		//				}
-		//			}
-		//			
-		//		}
-		//		ArrayList<Point> reversed = new ArrayList<Point>();
-		//		ArrayList<Point> reversedM = new ArrayList<Point>();
-		//		for (i = points.size() - 1; i >= 0; i--) {
-		//			Point curr = new Point(points.get(i).x + m, points.get(i).y);
-		//			reversed.add(points.get(i));
-		//			reversedM.add(curr);
-		//		}
-		//		
-		//		p.put(0, reversed);
-		//		p.put(m, reversedM);
 	}
 
 
