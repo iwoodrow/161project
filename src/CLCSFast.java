@@ -30,22 +30,22 @@ public class CLCSFast {
     }
 
 	static void FindShortestPaths(int l, int u) {
+		// System.err.println("Calculating shortest path on " + l + ", " + u);
 		if (u - l <= 1) return;
 		int mid = (l + u) / 2;
 
-		Set<Point> s = new HashSet<Point>();
-		for (int row : p.keySet()){
-			for (Point p1 : p.get(row)){
-				for (int x=p1.x; x<=p1.y; x++){
-					s.add(new Point(row + 1, x));
-				}
-				row++;
-			}
-		}
-		// printArr(s);
-
 		p.put(mid, SingleShortestPath(mid, p.get(l), p.get(u), l, u));
-		// System.err.println("P[" + mid + "] =" + p.get(mid));
+		// Set<Point> s = new HashSet<Point>();
+		// for (int row : p.keySet()){
+		// 	for (Point p1 : p.get(row)){
+		// 		for (int x=p1.x; x<=p1.y; x++){
+		// 			s.add(new Point(row + 1, x));
+		// 		}
+		// 		row++;
+		// 	}
+		// }
+		// printArr(s);	
+		// System.err.println(p.get(mid));	// System.err.prin
 		// try{Thread.sleep(5000);}catch(Exception e){}
 
 		FindShortestPaths(l, mid);
@@ -163,7 +163,7 @@ public class CLCSFast {
 		ArrayList<Point> points = new ArrayList<Point>();		
 		int m = A.length;
 		int n = B.length;
-		for (int f=0; f<m; f++){
+		for (int f=0; f<=m; f++){
 			points.add(new Point(0,0));
 		}
 		int col = n;
@@ -193,7 +193,7 @@ public class CLCSFast {
 			// printArr(row, col);
 				row--;
 			}
-			points.set(i, curr);
+			points.set(i + 1, curr);
 
 		}
 		return points;
