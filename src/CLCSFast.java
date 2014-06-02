@@ -32,7 +32,22 @@ public class CLCSFast {
 	static void FindShortestPaths(int l, int u) {
 		if (u - l <= 1) return;
 		int mid = (l + u) / 2;
+
+		Set<Point> s = new HashSet<Point>();
+		for (int row : p.keySet()){
+			for (Point p1 : p.get(row)){
+				for (int x=p1.x; x<=p1.y; x++){
+					s.add(new Point(row + 1, x));
+				}
+				row++;
+			}
+		}
+		// printArr(s);
+
 		p.put(mid, SingleShortestPath(mid, p.get(l), p.get(u), l, u));
+		// System.err.println("P[" + mid + "] =" + p.get(mid));
+		// try{Thread.sleep(5000);}catch(Exception e){}
+
 		FindShortestPaths(l, mid);
 		FindShortestPaths(mid, u);
 	}
@@ -98,20 +113,20 @@ public class CLCSFast {
 				}
 			}
 		}
-		return pointList(mid + m + 1);
+		return pointList(mid + m - 1);
 	}
 
-	static void printArr(int currRow, int curCol){
+	static void printArr(Set<Point> points){
 		System.err.print("     ");
 		for (int col=1; col<=B.length; col++){
 		    System.err.print(" " + B[col - 1] +" ");
 		}
 		System.err.println();
 		System.err.print("  ");
-		for (int row=0; row<=A.length; row++){
+		for (int row=0; row<=2*A.length; row++){
 			if (row != 0) System.err.print(A[(row-1) % A.length] + " ");
 		    for (int col=0; col<=B.length; col++){
-		    	if (row == currRow && col == curCol){
+		    	if (points.contains(new Point(row, col))){
 		    	System.err.print("[" + arr[row][col] +"]");
 		    	}else{
 		    	System.err.print(" " + arr[row][col] +" ");
