@@ -5,8 +5,7 @@ import java.awt.Point;
 public class CLCSFast {
 	static int[][] arr;
 	static char[] A, B;
-	static Map<Integer,
-	ArrayList<Point>> p = new HashMap<Integer, ArrayList<Point>>();
+	static Map<Integer, ArrayList<Point>> p;
 
 
 	static int CLCS() {
@@ -154,7 +153,7 @@ public class CLCSFast {
 
 		//path: ArrayList of Point(leftmost index, rightmost index) of a given row -- length m
 		//one entry per row, path must span m rows
-		System.err.println("Points: " + pointList(m));
+		//System.err.println("Points: " + pointList(m));
 		p.put(0, pointList(m));
 		p.put(m, pointList(m));
 	}
@@ -206,6 +205,7 @@ public class CLCSFast {
 			A = s.next().toCharArray();
 			B = s.next().toCharArray();
 			arr = new int[4096][2048];
+			p = new HashMap<Integer, ArrayList<Point>>();
 			System.err.println(tc);
 			System.out.println(CLCS());
 		}
