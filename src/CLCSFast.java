@@ -3,7 +3,7 @@ import java.awt.Point;
 
 
 public class CLCSFast {
-	static int[][] arr = new int[4096][2048];
+	static int[][] arr;
 	static char[] A, B;
 	static Map<Integer,
 	ArrayList<Point>> p = new HashMap<Integer, ArrayList<Point>>();
@@ -66,7 +66,7 @@ public class CLCSFast {
 		int m = A.length, n = B.length;
 		int i, j;
         mid++;
-        lowerIndex++	;
+        lowerIndex++;
         upperIndex++;
 		//Initialize previous row (before first point of lower path) to 0
 		for (j = 0; j <= n; j++) arr[mid - 1][j] = 0;
@@ -76,39 +76,39 @@ public class CLCSFast {
 		int end;
 		for (i = mid; i < upperIndex; i++) {
 			//start = upper.get(i - mid).x;
-			end = lower.get(i - lowerIndex).y;
+			end = lower.get(i - lowerIndex + 1).y;
 			for (j = start; j <= end; j++) {
 				int left = arr[i][j-1];
-				int up = (inPath(lower, i - lowerIndex - 1, j) != 1) ? arr[i-1][j] : 0;
+				int up = (inPath(lower, i - lowerIndex, j) != 1) ? arr[i-1][j] : 0;
 				arr[i][j] = Math.max(left, up);
-				if (j!= 0 && A[(i-1) % A.length] == B[j - 1] && inPath(lower, i - lowerIndex - 1, j - 1) != 1) {
+				if (j!= 0 && A[(i-1) % A.length] == B[j - 1] && inPath(lower, i - lowerIndex, j - 1) != 1) {
 					arr[i][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
 				}
 			}
 		}
 		for (i = upperIndex; i < lowerIndex + m; i++){
-			start = upper.get(i - upperIndex).x;
-			end = lower.get(i - lowerIndex).y;
+			start = upper.get(i - upperIndex + 1).x;
+			end = lower.get(i - lowerIndex + 1).y;
             for (j = start; j <= end; j++){
-                int left = (inPath(upper, i - upperIndex, j - 1) != -1) ? arr[i][j - 1] : 0;
-                int up =  (inPath(lower, i - lowerIndex - 1, j) != 1) ? arr[i - 1][j] : 0;
+                int left = (inPath(upper, i - upperIndex + 1, j - 1) != -1) ? arr[i][j - 1] : 0;
+                int up =  (inPath(lower, i - lowerIndex, j) != 1) ? arr[i - 1][j] : 0;
                 arr[i][j] = Math.max(left, up);
                 // System.err.println("i-1 % A.length: " + ((i-1) % A.length) + " a.length: " + A.length + " j-1: " + (j-1) + " B.length: " + B.length); 
                 if (j!= 0 && A[(i-1) % A.length] == B[j-1] &&
-                          (inPath(lower, i - lowerIndex - 1, j - 1) != 1) &&
-                           inPath(upper, i - upperIndex - 1, j - 1) != -1){
+                          (inPath(lower, i - lowerIndex, j - 1) != 1) &&
+                           inPath(upper, i - upperIndex, j - 1) != -1){
                     arr[i][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
                 }
             }
 		}
 		for (i = lowerIndex + m; i < mid + m; i++){
-			start = upper.get(i - upperIndex).x;
+			start = upper.get(i - upperIndex + 1).x;
 			end = n;
 			for (j = start; j <= end; j++){
-				int left = (inPath(upper, i - upperIndex, j - 1) != -1) ? arr[i][j - 1] : 0;
+				int left = (inPath(upper, i - upperIndex + 1, j - 1) != -1) ? arr[i][j - 1] : 0;
 				int up = arr[i - 1][j];
 				arr[i][j] = Math.max(left, up);
-				if (j!= 0 && A[(i-1) % A.length] == B[j-1] && inPath(upper, i - upperIndex - 1, j - 1) != -1) {
+				if (j!= 0 && A[(i-1) % A.length] == B[j-1] && inPath(upper, i - upperIndex, j - 1) != -1) {
 					arr[i][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
 				}
 			}
@@ -205,6 +205,7 @@ public class CLCSFast {
 		for (int tc = 0; tc < T; tc++) {
 			A = s.next().toCharArray();
 			B = s.next().toCharArray();
+			arr = new int[4096][2048];
 			System.err.println(tc);
 			System.out.println(CLCS());
 		}
