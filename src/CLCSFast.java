@@ -22,9 +22,9 @@ public class CLCSFast {
 		}
 		if (maxPath == null) return 0;
 		for (int i=0; i<maxPath.length; i++){
-			System.err.print(maxPath[i] + ", ");
+			// System.err.print(maxPath[i] + ", ");
 		}
-		System.err.println("\n\n\n\n\n\n\n\n");
+		// System.err.println("\n\n\n\n\n\n\n\n");
 		return max;
 	}
 

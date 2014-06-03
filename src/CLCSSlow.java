@@ -44,7 +44,7 @@ public class CLCSSlow {
     for (int tc = 0; tc < T; tc++) {
       A = s.next().toCharArray();
       B = s.next().toCharArray();
-      System.err.println(tc);
+      // System.err.println(tc);
       System.out.println(CLCS());
     }
   }
