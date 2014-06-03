@@ -10,18 +10,19 @@ public class CLCSFast {
 
 	static int CLCS() {
 		LCS();
-		System.err.println("Original array");
 
-		 // Set<Point> s = new HashSet<Point>();
-		 // for (int row : p.keySet()){
-		 // 	for (Point p1 : p.get(row)){
-		 // 		for (int x=p1.x; x<=p1.y; x++){
-		 // 			s.add(new Point(row, x));
-		 // 		}
-		 // 		row++;
-		 // 	}
-		 // }
-		 // printArr(s);	
+
+		// System.err.println("Original array");
+		//  Set<Point> s = new HashSet<Point>();
+		//  for (int row : p.keySet()){
+		//  	for (Point p1 : p.get(row)){
+		//  		for (int x=p1.x; x<=p1.y; x++){
+		//  			s.add(new Point(row, x));
+		//  		}
+		//  		row++;
+		//  	}
+		//  }
+		//  printArr(s);	
 
 
 		FindShortestPaths(0, A.length);
@@ -52,29 +53,33 @@ public class CLCSFast {
     }
 
 	static void FindShortestPaths(int l, int u) {
-		// System.err.println("Calculating shortest path on " + l + ", " + u);
 		if (u - l <= 1) return;
 		int mid = (l + u) / 2;
 
 
-
-		p.put(mid, SingleShortestPath(mid, p.get(l), p.get(u), l, u));
-
-
-		 // Set<Point> s = new HashSet<Point>();
-		 // for (int row : p.keySet()){
-		 // 	for (Point p1 : p.get(row)){
-		 // 		for (int x=p1.x; x<=p1.y; x++){
-		 // 			s.add(new Point(row, x));
-		 // 		}
-		 // 		row++;
-		 // 	}
-		 // }
-		 // printArr(s);
+		Point[] midList = SingleShortestPath(mid, p.get(l), p.get(u), l, u);
+		p.put(mid, midList);
 
 
-		 // System.err.println(p.get(mid));	// System.err.prin
-		 // try{Thread.sleep(1000);}catch(Exception e){}
+
+		// System.err.println("Calculating shortest path on " + l + ", " + u);
+		//  Set<Point> s = new HashSet<Point>();
+		//  for (int row : p.keySet()){
+		//  	for (Point p1 : p.get(row)){
+		//  		for (int x=p1.x; x<=p1.y; x++){
+		//  			s.add(new Point(row, x));
+		//  		}
+		//  		row++;
+		//  	}
+		//  }
+		//  printArr(s);
+		//  for(int i = 0; i < midList.length; i++) {
+		//  	System.err.print(midList[i] + "  ");
+		//  }
+		//  System.err.println();
+		//  try{Thread.sleep(1000);}catch(Exception e){}
+
+
 
 		FindShortestPaths(l, mid);
 		FindShortestPaths(mid, u);
@@ -94,6 +99,7 @@ public class CLCSFast {
 	private static boolean inRange(Point[] lower, Point[] upper, int lowerIndex, int upperIndex, int row, int col){
 		if (row < 0) return false;
 		if (col < 0) return false;
+		// System.err.println("row: " + row + " col: " + col + " li: " + lowerIndex + " ui: " + upperIndex);
 		if (upperIndex <= row && row < upperIndex + upper.length && col < upper[row - upperIndex].x) return false;
 		if (lowerIndex <= row && row < lowerIndex + lower.length && col > lower[row - lowerIndex].y) return false;
         return true;
@@ -212,15 +218,18 @@ public class CLCSFast {
 		Point[] points = new Point[m + 1];		
 		points[0] = new Point(0,0);
 		int col = n;
+		// System.err.print("path: " + ((lowerIndex + upperIndex )/ 2));
 		for (int i = m; i > 0; i--) {
 			Point curr = new Point(col, col);
-			// boolean leftOOB = (lower == null) ? false : inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row, col - 1);
-			// boolean upOOB = (lower == null) ? false : inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row - 1, col);
-			while (!false && col > 0 && A[(row - 1) % A.length] != B[col - 1] && (false || (arr[row][col - 1] >= arr[row - 1][col]))) 	 {
+			boolean leftOOB = (lower == null) ? false : !inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row, col - 1);
+			boolean upOOB = (lower == null) ? false : !inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row - 1, col);
+			// System.err.println("upOOB " + upOOB);
+			while (!leftOOB && col > 0 && A[(row - 1) % A.length] != B[col - 1] && (upOOB || (arr[row][col - 1] >= arr[row - 1][col]))) 	 {
 				col--;
 				curr.x--;
-				// leftOOB = (lower == null) ? false : inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row, col - 1);
-				// upOOB = (lower == null) ? false : inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row - 1, col);
+				leftOOB = (lower == null) ? false : !inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row, col - 1);
+				upOOB = (lower == null) ? false : !inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row - 1, col);
+				// System.err.println("upOOB2 " + upOOB);
 			}
 			if (col != 0 &&	row != 0 && A[(row - 1) % A.length] == B[col - 1]) {
 				col--;
