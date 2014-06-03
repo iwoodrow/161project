@@ -42,18 +42,18 @@ public class CLCSFast {
 		int mid = (l + u) / 2;
 
 		p.put(mid, SingleShortestPath(mid, p.get(l), p.get(u), l, u));
-		 Set<Point> s = new HashSet<Point>();
-		 for (int row : p.keySet()){
-		 	for (Point p1 : p.get(row)){
-		 		for (int x=p1.x; x<=p1.y; x++){
-		 			s.add(new Point(row, x));
-		 		}
-		 		row++;
-		 	}
-		 }
-		 printArr(s);	
-		 System.err.println(p.get(mid));	// System.err.prin
-		 try{Thread.sleep(1000);}catch(Exception e){}
+		//  Set<Point> s = new HashSet<Point>();
+		//  for (int row : p.keySet()){
+		//  	for (Point p1 : p.get(row)){
+		//  		for (int x=p1.x; x<=p1.y; x++){
+		//  			s.add(new Point(row, x));
+		//  		}
+		//  		row++;
+		//  	}
+		//  }
+		//  printArr(s);	
+		//  System.err.println(p.get(mid));	// System.err.prin
+		//  try{Thread.sleep(1000);}catch(Exception e){}
 
 		FindShortestPaths(l, mid);
 		FindShortestPaths(mid, u);
@@ -172,38 +172,21 @@ public class CLCSFast {
 		int m = A.length;
     	int n = B.length;
 		Point[] points = new Point[m + 1];		
-		for (int f=0; f<=m; f++){
-			points[f] = new Point(0,0);
-		}
+		points[0] = new Point(0,0);
 		int col = n;
-		for (int i = m - 1; i >= 0; i--) {
+		for (int i = m; i > 0; i--) {
 			Point curr = new Point(col, col);
 			while (col != 0 && A[(row - 1) % A.length] != B[col - 1] && arr[row][col - 1] >= arr[row - 1][col]) {
-							try{
-			// Thread.sleep(2000);
-			}catch(Exception e){}	
-			// printArr(row, col);//move left
 				col--;
-				//move leftmost left 
 				curr.x--;
-
 			}
 			if (col != 0 &&	row != 0 && A[(row - 1) % A.length] == B[col - 1]) {
-							try{
-			// Thread.sleep(2000);
-			}catch(Exception e){}	
-			// printArr(row, col);
 				col--;
 				row--;
 			} else {
-							try{
-			// Thread.sleep(2000);
-			}catch(Exception e){}	
-			// printArr(row, col);
 				row--;
 			}
-			points[i + 1] = curr;
-
+			points[i] = curr;
 		}
 		return points;
 	}
