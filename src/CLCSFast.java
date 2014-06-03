@@ -98,11 +98,11 @@ public class CLCSFast {
         upperIndex++;
 		//Initialize previous row (before first point of lower path) to 0
 		for (j = 0; j <= n; j++) arr[mid - 1][j] = 0;
-		for (int x=0; x<=2*A.length; x++){
-			for (int y=0; y<=B.length; y++){
-				arr[x][y] = 0;
-			}
-		}
+		// for (int x=0; x<=2*A.length; x++){
+			// for (int y=0; y<=B.length; y++){
+				// arr[x][y] = 0;
+			// }
+		// }
 
 		int start = 1;
 		int end;
@@ -145,7 +145,7 @@ public class CLCSFast {
 				}
 			}
 		}
-		return pointList(mid + m - 1);
+		return pointList(mid + m - 1, lower, upper);
 	}
 
 	static void printArr(Set<Point> points){
@@ -189,11 +189,11 @@ public class CLCSFast {
 		//path: ArrayList of Point(leftmost index, rightmost index) of a given row -- length m
 		//one entry per row, path must span m rows
 		//System.err.println("Points: " + pointList(m));
-		p.put(0, pointList(m));
-		p.put(m, pointList(m));
+		p.put(0, pointList(m, null, null));
+		p.put(m, pointList(m, null, null));
 	}
 
-	private static Point[] pointList(int row) {
+	private static Point[] pointList(int row, Point[] lower, Point[] upper) {
 		int m = A.length;
     	int n = B.length;
 		Point[] points = new Point[m + 1];		
@@ -201,9 +201,14 @@ public class CLCSFast {
 		int col = n;
 		for (int i = m; i > 0; i--) {
 			Point curr = new Point(col, col);
-			while (col != 0 && A[(row - 1) % A.length] != B[col - 1] && arr[row][col - 1] >= arr[row - 1][col]) {
+			boolean leftOOB = (upper == null) ? false : (inPath(upper, i, col - 1) == -1);
+			boolean upOOB = (lower == null) ? false : (inPath(lower, i - 1, col) == 1);
+
+			while (col != 0 && !leftOOB && A[(row - 1) % A.length] != B[col - 1] && (upOOB || arr[row][col - 1] >= arr[row - 1][col])) {
 				col--;
 				curr.x--;
+				leftOOB = (upper == null) ? false : (inPath(upper, i, col - 1) == -1);
+			    upOOB = (lower == null) ? false : (inPath(lower, i - 1, col) == 1);
 			}
 			if (col != 0 &&	row != 0 && A[(row - 1) % A.length] == B[col - 1]) {
 				col--;
