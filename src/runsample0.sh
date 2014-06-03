@@ -5,5 +5,5 @@ if [ $# -ne 1 ]; then
   exit
 fi
 
-# echo "Compiling and running the Java file $1..."
-java ${1%%.*} < sample3.in > sample3.out
+echo "Compiling and running the Java file $1..."
+javac $1 && time java ${1%%.*} < sample3.in > sample3.out

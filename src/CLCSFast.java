@@ -10,7 +10,7 @@ public class CLCSFast {
 
 	static int CLCS() {
 		LCS();
-		// System.err.println("Original array");
+		System.err.println("Original array");
 
 		 // Set<Point> s = new HashSet<Point>();
 		 // for (int row : p.keySet()){
@@ -73,7 +73,7 @@ public class CLCSFast {
 		 // printArr(s);
 
 
-		 // // System.err.println(p.get(mid));	// System.err.prin
+		 // System.err.println(p.get(mid));	// System.err.prin
 		 // try{Thread.sleep(1000);}catch(Exception e){}
 
 		FindShortestPaths(l, mid);
@@ -89,6 +89,20 @@ public class CLCSFast {
         return 0;
 	}
 
+
+
+	private static boolean inRange(Point[] lower, Point[] upper, int lowerIndex, int upperIndex, int row, int col){
+		if (row < 0) return false;
+		if (col < 0) return false;
+		if (upperIndex <= row && row < upperIndex + upper.length && col < upper[row - upperIndex].x) return false;
+		if (lowerIndex <= row && row < lowerIndex + lower.length && col > lower[row - lowerIndex].y) return false;
+        return true;
+	}
+
+
+
+
+
 	private static Point[] SingleShortestPath(int mid,
 			Point[] lower, Point[] upper, int lowerIndex, int upperIndex) {
 		int m = A.length, n = B.length;
@@ -99,9 +113,9 @@ public class CLCSFast {
 		//Initialize previous row (before first point of lower path) to 0
 		for (j = 0; j <= n; j++) arr[mid - 1][j] = 0;
 		// for (int x=0; x<=2*A.length; x++){
-			// for (int y=0; y<=B.length; y++){
-				// arr[x][y] = 0;
-			// }
+		// 	for (int y=0; y<=B.length; y++){
+		// 		arr[x][y] = 0;
+		// 	}
 		// }
 
 		int start = 1;
@@ -111,9 +125,9 @@ public class CLCSFast {
 			end = lower[i - lowerIndex + 1].y;
 			for (j = start; j <= end; j++) {
 				int left = arr[i][j-1];
-				int up = (inPath(lower, i - lowerIndex, j) != 1) ? arr[i-1][j] : 0;
+				int up = (inRange(lower, upper, lowerIndex - 1, upperIndex - 1, i - 1, j)) ? arr[i-1][j] : 0;
 				arr[i][j] = Math.max(left, up);
-				if (j!= 0 && A[(i-1) % A.length] == B[j - 1] && inPath(lower, i - lowerIndex, j - 1) != 1) {
+				if (j!= 0 && A[(i-1) % A.length] == B[j - 1] && inRange(lower, upper, lowerIndex - 1, upperIndex - 1, i - 1, j - 1)) {
 					arr[i][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
 				}
 			}
@@ -122,13 +136,12 @@ public class CLCSFast {
 			start = upper[i - upperIndex + 1].x;
 			end = lower[i - lowerIndex + 1].y;
             for (j = start; j <= end; j++){
-                int left = (inPath(upper, i - upperIndex + 1, j - 1) != -1) ? arr[i][j - 1] : 0;
-                int up =  (inPath(lower, i - lowerIndex, j) != 1) ? arr[i - 1][j] : 0;
+                int left = (inRange(lower, upper, lowerIndex - 1, upperIndex - 1, i, j - 1)) ? arr[i][j - 1] : 0;
+                int up =  (inRange(lower, upper, lowerIndex - 1, upperIndex - 1, i - 1, j)) ? arr[i - 1][j] : 0;
                 arr[i][j] = Math.max(left, up);
                 // System.err.println("i-1 % A.length: " + ((i-1) % A.length) + " a.length: " + A.length + " j-1: " + (j-1) + " B.length: " + B.length); 
                 if (j!= 0 && A[(i-1) % A.length] == B[j-1] &&
-                          (inPath(lower, i - lowerIndex, j - 1) != 1) &&
-                           inPath(upper, i - upperIndex, j - 1) != -1){
+                          (inRange(lower, upper, lowerIndex - 1, upperIndex - 1, i - 1, j - 1))){
                     arr[i][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
                 }
             }
@@ -137,15 +150,15 @@ public class CLCSFast {
 			start = upper[i - upperIndex + 1].x;
 			end = n;
 			for (j = start; j <= end; j++){
-				int left = (inPath(upper, i - upperIndex + 1, j - 1) != -1) ? arr[i][j - 1] : 0;
+				int left = (inRange(lower, upper, lowerIndex - 1, upperIndex - 1, i, j - 1)) ? arr[i][j - 1] : 0;
 				int up = arr[i - 1][j];
 				arr[i][j] = Math.max(left, up);
-				if (j!= 0 && A[(i-1) % A.length] == B[j-1] && inPath(upper, i - upperIndex, j - 1) != -1) {
+				if (j!= 0 && A[(i-1) % A.length] == B[j-1] && inRange(lower, upper, lowerIndex - 1, upperIndex - 1, i - 1, j - 1)) {
 					arr[i][j] = Math.max(arr[i][j], arr[i-1][j-1]+1);
 				}
 			}
 		}
-		return pointList(mid + m - 1, lower, upper);
+		return pointList(mid + m - 1, lower, upper, lowerIndex, upperIndex);
 	}
 
 	static void printArr(Set<Point> points){
@@ -189,11 +202,11 @@ public class CLCSFast {
 		//path: ArrayList of Point(leftmost index, rightmost index) of a given row -- length m
 		//one entry per row, path must span m rows
 		//System.err.println("Points: " + pointList(m));
-		p.put(0, pointList(m, null, null));
-		p.put(m, pointList(m, null, null));
+		p.put(0, pointList(m, null, null, 0, 0));
+		p.put(m, pointList(m, null, null, 0, 0));
 	}
 
-	private static Point[] pointList(int row, Point[] lower, Point[] upper) {
+	private static Point[] pointList(int row, Point[] lower, Point[] upper, int lowerIndex, int upperIndex) {
 		int m = A.length;
     	int n = B.length;
 		Point[] points = new Point[m + 1];		
@@ -201,14 +214,13 @@ public class CLCSFast {
 		int col = n;
 		for (int i = m; i > 0; i--) {
 			Point curr = new Point(col, col);
-			boolean leftOOB = (upper == null) ? false : (inPath(upper, i, col - 1) == -1);
-			boolean upOOB = (lower == null) ? false : (inPath(lower, i - 1, col) == 1);
-
-			while (col != 0 && !leftOOB && A[(row - 1) % A.length] != B[col - 1] && (upOOB || arr[row][col - 1] >= arr[row - 1][col])) {
+			// boolean leftOOB = (lower == null) ? false : inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row, col - 1);
+			// boolean upOOB = (lower == null) ? false : inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row - 1, col);
+			while (!false && col > 0 && A[(row - 1) % A.length] != B[col - 1] && (false || (arr[row][col - 1] >= arr[row - 1][col]))) 	 {
 				col--;
 				curr.x--;
-				leftOOB = (upper == null) ? false : (inPath(upper, i, col - 1) == -1);
-			    upOOB = (lower == null) ? false : (inPath(lower, i - 1, col) == 1);
+				// leftOOB = (lower == null) ? false : inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row, col - 1);
+				// upOOB = (lower == null) ? false : inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row - 1, col);
 			}
 			if (col != 0 &&	row != 0 && A[(row - 1) % A.length] == B[col - 1]) {
 				col--;
