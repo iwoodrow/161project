@@ -20,6 +20,7 @@ public class CLCSFast {
 				maxPath = p.get(n);	
 			} 
 		}
+		if (maxPath == null) return 0;
 		for (int i=0; i<maxPath.length; i++){
 			System.err.print(maxPath[i] + ", ");
 		}
