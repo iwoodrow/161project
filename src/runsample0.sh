@@ -6,4 +6,4 @@ if [ $# -ne 1 ]; then
 fi
 
 echo "Compiling and running the Java file $1..."
-javac $1 && time java ${1%%.*} < sample3.in > sample0.out
+javac $1 && time java ${1%%.*} < sample3.in > sample3.out
