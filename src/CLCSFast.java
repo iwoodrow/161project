@@ -10,6 +10,20 @@ public class CLCSFast {
 
 	static int CLCS() {
 		LCS();
+		// System.err.println("Original array");
+
+		 // Set<Point> s = new HashSet<Point>();
+		 // for (int row : p.keySet()){
+		 // 	for (Point p1 : p.get(row)){
+		 // 		for (int x=p1.x; x<=p1.y; x++){
+		 // 			s.add(new Point(row, x));
+		 // 		}
+		 // 		row++;
+		 // 	}
+		 // }
+		 // printArr(s);	
+
+
 		FindShortestPaths(0, A.length);
 		int max = 0;
 		Point[] maxPath = null;
@@ -42,19 +56,25 @@ public class CLCSFast {
 		if (u - l <= 1) return;
 		int mid = (l + u) / 2;
 
+
+
 		p.put(mid, SingleShortestPath(mid, p.get(l), p.get(u), l, u));
-		//  Set<Point> s = new HashSet<Point>();
-		//  for (int row : p.keySet()){
-		//  	for (Point p1 : p.get(row)){
-		//  		for (int x=p1.x; x<=p1.y; x++){
-		//  			s.add(new Point(row, x));
-		//  		}
-		//  		row++;
-		//  	}
-		//  }
-		//  printArr(s);	
-		//  System.err.println(p.get(mid));	// System.err.prin
-		//  try{Thread.sleep(1000);}catch(Exception e){}
+
+
+		 // Set<Point> s = new HashSet<Point>();
+		 // for (int row : p.keySet()){
+		 // 	for (Point p1 : p.get(row)){
+		 // 		for (int x=p1.x; x<=p1.y; x++){
+		 // 			s.add(new Point(row, x));
+		 // 		}
+		 // 		row++;
+		 // 	}
+		 // }
+		 // printArr(s);
+
+
+		 // // System.err.println(p.get(mid));	// System.err.prin
+		 // try{Thread.sleep(1000);}catch(Exception e){}
 
 		FindShortestPaths(l, mid);
 		FindShortestPaths(mid, u);
@@ -78,7 +98,11 @@ public class CLCSFast {
         upperIndex++;
 		//Initialize previous row (before first point of lower path) to 0
 		for (j = 0; j <= n; j++) arr[mid - 1][j] = 0;
-
+		for (int x=0; x<=2*A.length; x++){
+			for (int y=0; y<=B.length; y++){
+				arr[x][y] = 0;
+			}
+		}
 
 		int start = 1;
 		int end;
