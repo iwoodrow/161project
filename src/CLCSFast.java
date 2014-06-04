@@ -228,7 +228,7 @@ public class CLCSFast {
 				col--;
 				curr.x--;
 				leftOOB = (lower == null) ? false : !inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row, col - 1);
-				upOOB = (lower == null) ? false : !inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row - 1, col);
+				if (upOOB) upOOB = (lower == null) ? false : !inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row - 1, col);
 				// System.err.println("upOOB2 " + upOOB);
 			}
 			if (col != 0 &&	row != 0 && A[(row - 1) % A.length] == B[col - 1]) {
