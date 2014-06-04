@@ -1,3 +1,10 @@
+/*  Contributors
+ *	Mariano Sorgente *** 05827781 *** marianos 
+ *	Whitney LaRow *** 05821502 *** wlarow
+ *	Isabelle Woodrow *** 05785520 *** iwoodrow
+ */
+
+
 import java.util.*;
 import java.awt.Point;
 
