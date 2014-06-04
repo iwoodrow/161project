@@ -6,7 +6,7 @@ public class CLCSFast {
 	static int[][] arr;
 	static char[] A, B;
 	static Map<Integer, Point[]> p;
-
+	static int m, n;
 
 	static int CLCS() {
 		LCS();
@@ -16,7 +16,7 @@ public class CLCSFast {
 		//  Set<Point> s = new HashSet<Point>();
 		//  for (int row : p.keySet()){
 		//  	for (Point p1 : p.get(row)){
-		//  		for (int x=p1.x; x<=p1.y; x++){
+		//  		for (int x=p1[0]; x<=p1[1]; x++){
 		//  			s.add(new Point(row, x));
 		//  		}
 		//  		row++;
@@ -29,7 +29,7 @@ public class CLCSFast {
 		int max = 0;
 		Point[] maxPath = null;
 		for (int n : p.keySet()) {
-			int pathSize = pathSize(p.get(n));
+			int pathSize = pathSize(p.get(n), max);
 			if (pathSize > max){
 				max = pathSize;
 				maxPath = p.get(n);	
@@ -43,11 +43,12 @@ public class CLCSFast {
 		return max;
 	}
 
-    static int pathSize(Point[] path){
+    static int pathSize(Point[] path, int maxLen){
     	int size = 0;
-        for (int i=0; i<path.length; i++){
-        	if (i == 0) continue;
-        	if (path[i].x > path[i-1].y) size++;
+    	int pathLen = path.length;
+        for (int i=1; i<pathLen; i++){
+        	if (path[i][0] > path[i-1][1]) size++;
+        	if (pathLen - i + size < maxLen - 1) break;
         }
         return size;
     }
@@ -60,13 +61,11 @@ public class CLCSFast {
 		Point[] midList = SingleShortestPath(mid, p.get(l), p.get(u), l, u);
 		p.put(mid, midList);
 
-
-
 		// System.err.println("Calculating shortest path on " + l + ", " + u);
 		//  Set<Point> s = new HashSet<Point>();
 		//  for (int row : p.keySet()){
 		//  	for (Point p1 : p.get(row)){
-		//  		for (int x=p1.x; x<=p1.y; x++){
+		//  		for (int x=p1[0]; x<=p1[1]; x++){
 		//  			s.add(new Point(row, x));
 		//  		}
 		//  		row++;
@@ -85,50 +84,28 @@ public class CLCSFast {
 		FindShortestPaths(mid, u);
 	}
 
-	private static int inPath(Point[] path, int row, int index){
-		if (row < 0) return 1;
-		if (index < 0) return -1;
-		if (index >= path[row].x && index <= path[row].y) return 0;
-        if (index < path[row].x) return -1;
-        if (index > path[row].y) return 1;
-        return 0;
-	}
-
-
-
 	private static boolean inRange(Point[] lower, Point[] upper, int lowerIndex, int upperIndex, int row, int col){
 		if (row < 0) return false;
 		if (col < 0) return false;
 		// System.err.println("row: " + row + " col: " + col + " li: " + lowerIndex + " ui: " + upperIndex);
-		if (upperIndex <= row && row < upperIndex + upper.length && col < upper[row - upperIndex].x) return false;
-		if (lowerIndex <= row && row < lowerIndex + lower.length && col > lower[row - lowerIndex].y) return false;
+		if (upperIndex <= row && col < upper[row - upperIndex][0]) return false;
+		if (row < lowerIndex + lower.length && col > lower[row - lowerIndex][1]) return false;
         return true;
 	}
 
-
-
-
-
 	private static Point[] SingleShortestPath(int mid,
 			Point[] lower, Point[] upper, int lowerIndex, int upperIndex) {
-		int m = A.length, n = B.length;
 		int i, j;
         mid++;
         lowerIndex++;
         upperIndex++;
 		//Initialize previous row (before first point of lower path) to 0
 		for (j = 0; j <= n; j++) arr[mid - 1][j] = 0;
-		// for (int x=0; x<=2*A.length; x++){
-		// 	for (int y=0; y<=B.length; y++){
-		// 		arr[x][y] = 0;
-		// 	}
-		// }
 
 		int start = 1;
 		int end;
 		for (i = mid; i < upperIndex; i++) {
-			//start = upper.get(i - mid).x;
-			end = lower[i - lowerIndex + 1].y;
+			end = lower[i - lowerIndex + 1][1];
 			for (j = start; j <= end; j++) {
 				int left = arr[i][j-1];
 				int up = (inRange(lower, upper, lowerIndex - 1, upperIndex - 1, i - 1, j)) ? arr[i-1][j] : 0;
@@ -139,8 +116,8 @@ public class CLCSFast {
 			}
 		}
 		for (i = upperIndex; i < lowerIndex + m; i++){
-			start = upper[i - upperIndex + 1].x;
-			end = lower[i - lowerIndex + 1].y;
+			start = upper[i - upperIndex + 1][0];
+			end = lower[i - lowerIndex + 1][1];
             for (j = start; j <= end; j++){
                 int left = (inRange(lower, upper, lowerIndex - 1, upperIndex - 1, i, j - 1)) ? arr[i][j - 1] : 0;
                 int up =  (inRange(lower, upper, lowerIndex - 1, upperIndex - 1, i - 1, j)) ? arr[i - 1][j] : 0;
@@ -153,7 +130,7 @@ public class CLCSFast {
             }
 		}
 		for (i = lowerIndex + m; i < mid + m; i++){
-			start = upper[i - upperIndex + 1].x;
+			start = upper[i - upperIndex + 1][0];
 			end = n;
 			for (j = start; j <= end; j++){
 				int left = (inRange(lower, upper, lowerIndex - 1, upperIndex - 1, i, j - 1)) ? arr[i][j - 1] : 0;
@@ -220,13 +197,13 @@ public class CLCSFast {
 		int col = n;
 		// System.err.print("path: " + ((lowerIndex + upperIndex )/ 2));
 		for (int i = m; i > 0; i--) {
-			Point curr = new Point(col, col);
+			Point curr = new Point(col, col)	;
 			boolean leftOOB = (lower == null) ? false : !inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row, col - 1);
 			boolean upOOB = (lower == null) ? false : !inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row - 1, col);
 			// System.err.println("upOOB " + upOOB);
 			while (!leftOOB && col > 0 && A[(row - 1) % A.length] != B[col - 1] && (upOOB || (arr[row][col - 1] >= arr[row - 1][col]))) 	 {
 				col--;
-				curr.x--;
+				curr[0]--;
 				leftOOB = (lower == null) ? false : !inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row, col - 1);
 				if (upOOB) upOOB = (lower == null) ? false : !inRange(lower, upper, lowerIndex - 1, upperIndex - 1, row - 1, col);
 				// System.err.println("upOOB2 " + upOOB);
@@ -248,6 +225,8 @@ public class CLCSFast {
 		for (int tc = 0; tc < T; tc++) {
 			A = s.next().toCharArray();
 			B = s.next().toCharArray();
+			m = A.length;
+			n = B.length;
 			arr = new int[4096][2048];
 			p = new HashMap<Integer, Point[]>();
 			System.err.println(tc);
