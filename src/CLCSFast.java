@@ -198,6 +198,7 @@ public class CLCSFast {
 			m = A.length;
 			n = B.length;
 			arr = new int[4096][2048];
+			// arr = new int[2*A + 1][B.length + 1];
 			p = new HashMap<Integer, Point[]>();
 			System.err.println(tc);
 			System.out.println(CLCS());
